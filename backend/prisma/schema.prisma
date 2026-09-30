@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String   // Hashed with bcryptjs
+  name      String?  @default("Administrator")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id                   Int       @id @default(autoincrement())
+  name                 String
+  email                String    @unique
+  password             String    // Hashed with bcryptjs
+  avatarUrl            String?
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+}
+
+model Anime {
+  id            Int          @id @default(autoincrement())
+  externalId    Int          @unique
+  title         String
+  titleEnglish  String?
+  synopsis      String?
+  type          String?
+  episodes      Int?
+  status        String?
+  score         Float?
+  imageUrl      String?
+  trailerUrl    String?
+  releaseDate   DateTime?
+  genres        AnimeGenre[]
+  episodesList  Episode[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([title])
+  @@index([status])
+}
+
+model Episode {
+  id            Int      @id @default(autoincrement())
+  animeId       Int
+  anime         Anime    @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  episodeNumber Int
+  title         String
+  titleJapanese String?
+  synopsis      String?
+  duration      Int?     @default(24)
+  thumbnailUrl  String?
+  streamUrl     String?
+  isFiller      Boolean  @default(false)
+  aired         DateTime?
+  createdAt     DateTime @default(now())
+
+  @@unique([animeId, episodeNumber])
+  @@index([animeId])
+}
+
+model Genre {
+  id     Int          @id @default(autoincrement())
+  name   String       @unique
+  anime  AnimeGenre[]
+}
+
+model AnimeGenre {
+  anime    Anime @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  animeId  Int
+  genre    Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  genreId  Int
+
+  @@id([animeId, genreId])
+}
+
+model SyncLog {
+  id          Int      @id @default(autoincrement())
+  runAt       DateTime @default(now())
+  status      String
+  itemsSynced Int?
+  message     String?
+}
