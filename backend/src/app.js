@@ -24,6 +24,19 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
+// Root welcome endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: '🚀 AniPulse Backend API is running successfully!',
+    endpoints: {
+      health: '/api/health',
+      anime: '/api/anime',
+      trending: '/api/anime/trending',
+      genres: '/api/genres',
+    },
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
