@@ -196,4 +196,10 @@ export const getSyncLogs = async () => {
   return response.data;
 };
 
+// AniBot AI Chat service
+export const sendChatMessage = async (messages) => {
+  const response = await apiClient.post('/chat', { messages });
+  return response.data;
+};
+
 export default apiClient;

@@ -12,6 +12,7 @@ import AdminLogin from './pages/AdminLogin';
 import Profile from './pages/Profile';
 import { LoginPage, SignUpPage, ForgotPasswordPage } from './pages/AuthPages';
 import AuthModal from './components/auth/AuthModal';
+import ChatModal from './components/chat/ChatModal';
 import { FilterProvider } from './context/FilterContext';
 import { AuthProvider } from './context/AuthContext';
 
@@ -23,6 +24,9 @@ export default function App() {
           <div className="min-h-screen flex flex-col bg-[#0b0f19] text-slate-100 selection:bg-purple-600 selection:text-white">
             {/* Global User Auth Modal */}
             <AuthModal />
+
+            {/* AI Anime Chatbot (AniBot) */}
+            <ChatModal />
 
             {/* Top Navbar */}
             <Navbar />
