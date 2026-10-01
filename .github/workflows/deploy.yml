@@ -29,6 +29,8 @@ jobs:
 
       - name: Build Frontend
         working-directory: frontend
+        env:
+          GITHUB_PAGES: 'true'
         run: npm run build
 
       - name: Copy index.html to 404.html for SPA routing
