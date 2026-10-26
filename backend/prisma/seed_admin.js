@@ -6,7 +6,7 @@ async function seedAdmin() {
   console.log('[SeedAdmin] Seeding default admin user...');
 
   const username = 'admin';
-  const email = 'admin@anipulse.com';
+  const email = 'admin@gmail.com';
   const plainPassword = 'admin123';
 
   const salt = await bcrypt.genSalt(10);
@@ -15,6 +15,7 @@ async function seedAdmin() {
   const admin = await prisma.adminUser.upsert({
     where: { username },
     update: {
+      email,
       password: hashedPassword,
     },
     create: {

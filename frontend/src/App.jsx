@@ -13,6 +13,7 @@ import Profile from './pages/Profile';
 import { LoginPage, SignUpPage, ForgotPasswordPage } from './pages/AuthPages';
 import AuthModal from './components/auth/AuthModal';
 import ChatModal from './components/chat/ChatModal';
+import AnnouncementBanner from './components/common/AnnouncementBanner';
 import { FilterProvider } from './context/FilterContext';
 import { AuthProvider } from './context/AuthContext';
 
@@ -22,6 +23,9 @@ export default function App() {
       <AuthProvider>
         <FilterProvider>
           <div className="min-h-screen flex flex-col bg-[#0b0f19] text-slate-100 selection:bg-purple-600 selection:text-white">
+            {/* Live In-App Announcement Banner */}
+            <AnnouncementBanner />
+
             {/* Global User Auth Modal */}
             <AuthModal />
 

@@ -6,6 +6,7 @@ const genreRoutes = require('./routes/genre.routes');
 const syncRoutes = require('./routes/sync.routes');
 const authRoutes = require('./routes/auth.routes');
 const chatRoutes = require('./routes/chat.routes');
+const settingsRoutes = require('./routes/settings.routes');
 const errorHandler = require('./middleware/errorHandler');
 const { initSyncCron } = require('./jobs/syncCron');
 
@@ -34,6 +35,7 @@ app.get('/', (req, res) => {
       anime: '/api/anime',
       trending: '/api/anime/trending',
       genres: '/api/genres',
+      settings: '/api/settings',
       chat: '/api/chat',
     },
   });
@@ -49,6 +51,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/anime', animeRoutes);
 app.use('/api/genres', genreRoutes);
 app.use('/api/sync', syncRoutes);
+app.use('/api/settings', settingsRoutes);
 app.use('/api/chat', chatRoutes);
 
 // Error Handling Middleware

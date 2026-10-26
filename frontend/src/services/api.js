@@ -202,4 +202,20 @@ export const sendChatMessage = async (messages) => {
   return response.data;
 };
 
+// Platform & Admin Settings endpoints
+export const getPlatformSettings = async () => {
+  const response = await apiClient.get('/settings');
+  return response.data;
+};
+
+export const updatePlatformSettings = async (settings) => {
+  const response = await apiClient.put('/settings', settings);
+  return response.data;
+};
+
+export const resetPlatformSettings = async () => {
+  const response = await apiClient.post('/settings/reset');
+  return response.data;
+};
+
 export default apiClient;

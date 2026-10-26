@@ -18,10 +18,28 @@ import {
   Shield,
   Clock,
   LogOut,
-  User
+  User,
+  Users,
+  Bell,
+  Globe,
+  BarChart3,
+  ShoppingBag,
+  Cpu,
+  Compass,
+  Wrench,
+  Palette
 } from 'lucide-react';
 import AnimeModal from '../components/admin/AnimeModal';
 import EpisodeModal from '../components/admin/EpisodeModal';
+import CommunityTab from '../components/admin/tabs/CommunityTab';
+import NotificationsTab from '../components/admin/tabs/NotificationsTab';
+import LocalizationTab from '../components/admin/tabs/LocalizationTab';
+import AnalyticsTab from '../components/admin/tabs/AnalyticsTab';
+import MonetizationTab from '../components/admin/tabs/MonetizationTab';
+import TechnicalTab from '../components/admin/tabs/TechnicalTab';
+import DiscoveryTab from '../components/admin/tabs/DiscoveryTab';
+import MaintenanceTab from '../components/admin/tabs/MaintenanceTab';
+import UiPolishTab from '../components/admin/tabs/UiPolishTab';
 import PageTransition from '../components/animations/PageTransition';
 import AdminLogin from './AdminLogin';
 import { useAuth } from '../context/AuthContext';
@@ -40,7 +58,9 @@ import {
   updateGenre,
   deleteGenre,
   triggerDataSync,
-  getSyncLogs
+  getSyncLogs,
+  getPlatformSettings,
+  updatePlatformSettings
 } from '../services/api';
 
 export default function Admin() {
@@ -84,9 +104,44 @@ export default function Admin() {
   // Notification / Alert banner
   const [alert, setAlert] = useState(null);
 
+  // Unified Platform Settings state
+  const [platformSettings, setPlatformSettings] = useState(null);
+  const [isLoadingSettings, setIsLoadingSettings] = useState(false);
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+
   const showAlert = (message, type = 'success') => {
     setAlert({ message, type });
     setTimeout(() => setAlert(null), 4000);
+  };
+
+  // Load Platform Settings
+  const loadSettings = async () => {
+    setIsLoadingSettings(true);
+    try {
+      const res = await getPlatformSettings();
+      if (res.data) setPlatformSettings(res.data);
+    } catch (err) {
+      console.error('Failed to load platform settings:', err);
+    } finally {
+      setIsLoadingSettings(false);
+    }
+  };
+
+  // Save Platform Settings Patch
+  const handleSaveSettings = async (patch) => {
+    setIsSavingSettings(true);
+    try {
+      const res = await updatePlatformSettings(patch);
+      if (res.data) {
+        setPlatformSettings(res.data);
+        showAlert('Platform settings updated and deployed successfully!');
+      }
+    } catch (err) {
+      console.error('Failed to save platform settings:', err);
+      showAlert(err.response?.data?.message || 'Failed to save settings.', 'error');
+    } finally {
+      setIsSavingSettings(false);
+    }
   };
 
   // 1. Load Admin Stats
@@ -177,6 +232,7 @@ export default function Admin() {
       loadAllAnimeForDropdown();
       loadGenresData();
       loadLogs();
+      loadSettings();
     }
   }, [isAuthenticated]);
 
@@ -387,11 +443,20 @@ export default function Admin() {
       )}
 
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-800">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-800 scrollbar-thin">
         {[
           { id: 'overview', label: 'Overview & Stats', icon: LayoutDashboard },
           { id: 'anime', label: 'Anime Catalog', icon: Film },
           { id: 'episodes', label: 'Episode Manager', icon: Tv },
+          { id: 'community', label: 'Community & Social', icon: Users },
+          { id: 'notifications', label: 'Notifications & Alerts', icon: Bell },
+          { id: 'localization', label: 'Localization & A11y', icon: Globe },
+          { id: 'analytics', label: 'Analytics & A/B', icon: BarChart3 },
+          { id: 'monetization', label: 'Monetization & Store', icon: ShoppingBag },
+          { id: 'technical', label: 'Technical & CDN', icon: Cpu },
+          { id: 'discovery', label: 'Discovery & Recs', icon: Compass },
+          { id: 'maintenance', label: 'Release Checklist', icon: Wrench },
+          { id: 'ui_polish', label: 'Anime UI/UX Polish', icon: Palette },
           { id: 'genres', label: 'Genres Taxonomy', icon: Layers },
           { id: 'sync', label: 'Sync & Logs', icon: RefreshCw },
         ].map((tab) => {
@@ -1080,6 +1145,105 @@ export default function Admin() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ========================================================
+          TAB: COMMUNITY & SOCIAL
+         ======================================================== */}
+      {activeTab === 'community' && (
+        <CommunityTab
+          settings={platformSettings}
+          onSave={handleSaveSettings}
+          isSaving={isSavingSettings}
+        />
+      )}
+
+      {/* ========================================================
+          TAB: NOTIFICATIONS & ALERTS
+         ======================================================== */}
+      {activeTab === 'notifications' && (
+        <NotificationsTab
+          settings={platformSettings}
+          onSave={handleSaveSettings}
+          isSaving={isSavingSettings}
+        />
+      )}
+
+      {/* ========================================================
+          TAB: LOCALIZATION & ACCESSIBILITY
+         ======================================================== */}
+      {activeTab === 'localization' && (
+        <LocalizationTab
+          settings={platformSettings}
+          onSave={handleSaveSettings}
+          isSaving={isSavingSettings}
+        />
+      )}
+
+      {/* ========================================================
+          TAB: ANALYTICS & A/B TESTING
+         ======================================================== */}
+      {activeTab === 'analytics' && (
+        <AnalyticsTab
+          settings={platformSettings}
+          onSave={handleSaveSettings}
+          isSaving={isSavingSettings}
+        />
+      )}
+
+      {/* ========================================================
+          TAB: MONETIZATION & STORE
+         ======================================================== */}
+      {activeTab === 'monetization' && (
+        <MonetizationTab
+          settings={platformSettings}
+          onSave={handleSaveSettings}
+          isSaving={isSavingSettings}
+        />
+      )}
+
+      {/* ========================================================
+          TAB: TECHNICAL & CDN
+         ======================================================== */}
+      {activeTab === 'technical' && (
+        <TechnicalTab
+          settings={platformSettings}
+          onSave={handleSaveSettings}
+          isSaving={isSavingSettings}
+        />
+      )}
+
+      {/* ========================================================
+          TAB: DISCOVERY & RECOMMENDATIONS
+         ======================================================== */}
+      {activeTab === 'discovery' && (
+        <DiscoveryTab
+          settings={platformSettings}
+          onSave={handleSaveSettings}
+          isSaving={isSavingSettings}
+        />
+      )}
+
+      {/* ========================================================
+          TAB: RELEASE CHECKLIST & MAINTENANCE
+         ======================================================== */}
+      {activeTab === 'maintenance' && (
+        <MaintenanceTab
+          settings={platformSettings}
+          onSave={handleSaveSettings}
+          isSaving={isSavingSettings}
+        />
+      )}
+
+      {/* ========================================================
+          TAB: ANIME UI/UX POLISH
+         ======================================================== */}
+      {activeTab === 'ui_polish' && (
+        <UiPolishTab
+          settings={platformSettings}
+          onSave={handleSaveSettings}
+          isSaving={isSavingSettings}
+        />
       )}
 
       {/* Modals */}
